@@ -18,13 +18,15 @@ int checkDraw();
 void acceptInput(int *row ,int *col);
 void getPlayerMove(char mark, int *row, int *col);
 char switchPlayer(char current);
+void computerMoves(int *row,int *col);// computer
 void gameState(int moveNumber, char player, int row, int col);
 void gameResult(int result, char winner) ;
 void initializeLogFile();
 
+
 // Main function
 int main() {
-    int row, col, moveNumber = 1;
+    int row, col, moveNumber = 1 ,num,result ;
     char currentPlayer = 'X';
 
     do {
@@ -45,36 +47,94 @@ int main() {
     }
 
     initializeLogFile();  //write the changes to the text file 
+    printf("Select the Game mode:\n ");
+    printf("     1. Two Players (User to user)\n");
+    printf("     2. User vs Computer\n");
+    printf("     3. Three players\n");
 
-    printf("\n=== TIC TAC TOE %dx%d ===\n", SIZE, SIZE);
-    printf("Player X starts.\n");
+    printf("Enter choice (1-3):");
+    scanf("%d",&num);
+
+    switch(num){
+    case 1:
+           //run the two player game 
+	   printf("\n=== TIC TAC TOE %dx%d ===\n", SIZE, SIZE);
+           printf("Player X starts.\n");
+
+           //game started 
+             while (1) {
+                 showGrid();
+                 getPlayerMove(currentPlayer, &row, &col);
+                 markBoard(row, col, currentPlayer);
+                 gameState(moveNumber++, currentPlayer, row, col);
+
+                 if (checkWin()) {   //after each move check the winning condition
+                      showGrid();
+                      printf("Player %c wins!\n", currentPlayer);
+                      gameResult(1, currentPlayer);
+                      break;
+                 } else if (checkDraw()) {  //after each move check the winning condition
+                      showGrid();
+                      printf("It's a draw!\n");
+                      gameResult(0, ' ');
+                      break;
+                }
+
+                currentPlayer = switchPlayer(currentPlayer);  //switch the player 
+            }
  
-    //game started 
-    while (1) {
-        showGrid();  
-        getPlayerMove(currentPlayer, &row, &col);
-        markBoard(row, col, currentPlayer);
-        gameState(moveNumber++, currentPlayer, row, col);
-
-        if (checkWin()) {   //after each move check the winning condition
-            showGrid();
-            printf("Player %c wins!\n", currentPlayer);
-            gameResult(1, currentPlayer);
             break;
-        } else if (checkDraw()) {  //after each move check the winning condition
-            showGrid();
-            printf("It's a draw!\n");
-            gameResult(0, ' ');
-            break;
-        }
+        
+    case 2:
+            //run the user vs computer game
+	
+          printf("You are the player X and computer is the player O\n");
+          printf("\n=== TIC TAC TOE %dx%d ===\n", SIZE, SIZE);
+          printf("Player X starts.\n");
+	  showGrid();
+          srand(time(NULL)); //gave a seeding value as a starting value for the random nuber generator 
+          while(1){
 
-        currentPlayer = switchPlayer(currentPlayer);  //switch the player 
+               
+	       if (currentPlayer=='X'){
+		     getPlayerMove('X',&row,&col); //since the user is x
+	       }else{
+		      computerMoves(&row,&col);  //get the input from computer
+	       }
+
+               markBoard(row, col, currentPlayer);  //mark movements on the beard
+               gameState(moveNumber++, currentPlayer, row, col); //add game status to the file
+               showGrid(); //after each move show tj=he game status
+               
+	      if (checkWin()) {   //after each move check the winning condition
+                      showGrid();
+                      printf("Player %c wins!\n", currentPlayer);
+                      gameResult(1, currentPlayer);
+                      break;
+                 } else if (checkDraw()) {  //after each move check the winning condition
+                      showGrid();
+                      printf("It's a draw!\n");
+                      gameResult(0, ' ');
+                      break;
+                }
+	        currentPlayer=switchPlayer(currentPlayer);
+           }
+      
+
+           break; 
+
+    case 3:
+           //run the multiplayer game 
+           break;
+    default:
+           printf("The number is not a valid mode\n");
   }
+     printf("Game log saved to 'tictactoe_log.txt'\n");  //after switching before the next player start the game wirte the previous moves to thetxt file 
+     fclose(logFile); //file is closed 
+     freeBoard(); //memory allocated  to the board is freed 
 
-    printf("Game log saved to 'tictactoe_log.txt'\n");  //after switching before the next player start the game wirte the previous moves to thetxt file 
-    fclose(logFile); //file is closed 
-    freeBoard(); //memory allocated  to the board is freed 
-    return 0;
+ 
+return 0;
 }
 
 
@@ -218,8 +278,8 @@ int checkDraw() {
 
 //accept user input 
 void acceptInput(int *row ,int *col){
-	 printf(" enter row and column (0..%d): ", SIZE - 1);
-        scanf("%d %d", row, col);
+	 printf("Enter row and column (0  %d): ", SIZE - 1);
+         scanf("%d %d", row, col);
 }
 
 // Get player move
@@ -232,6 +292,18 @@ void getPlayerMove(char mark, int *row, int *col) {
         }
     } while (!checkForValidMove(*row, *col));
 }
+
+
+//get random numbers for computer
+void computerMoves(int*row,int*col){
+	do{
+	   *row=rand()%SIZE; // range will be from 0 to (SIZE-1)
+	   *col=rand()%SIZE; 
+	}while(!checkForValidMove(*row,*col)); //run until a valid position is given
+
+	printf("Computer moved to : %d %d \n",*row,*col);
+}
+
 
 // Switch player
 char switchPlayer(char current) {
