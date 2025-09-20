@@ -18,6 +18,7 @@ int checkDraw();
 void acceptInput(int *row ,int *col);
 void getPlayerMove(char mark, int *row, int *col);
 char switchPlayer(char current);
+int tempMoveCheck(int row,int col,char mark);
 void computerMoves(int *row,int *col);// computer
 void gameState(int moveNumber, char player, int row, int col);
 void gameResult(int result, char winner) ;
@@ -294,14 +295,44 @@ void getPlayerMove(char mark, int *row, int *col) {
 }
 
 
-//get random numbers for computer
-void computerMoves(int*row,int*col){
-	do{
-	   *row=rand()%SIZE; // range will be from 0 to (SIZE-1)
-	   *col=rand()%SIZE; 
-	}while(!checkForValidMove(*row,*col)); //run until a valid position is given
+// making computer understand the user's winning posibility before making the next move otherwise it take long time to finish the game when it comes to larger boards
 
-	printf("Computer moved to : %d %d \n",*row,*col);
+int tempMoveCheck(int row,int col,char mark){
+	board[row][col]=mark;     //Temperarily place the mark
+	int victory=checkWin();     //check all the winning posibilities of the user 
+	board[row][col]=' '; 	//remove the predicted move  
+	return victory;             // if victory is 1 it has a chance to win if it is 0 the move doesn't lead to win 
+}
+
+//this contain two behaviors of the computer 
+
+// 1.Try to block if the user has a  chance to win 
+void computerMoves(int*row,int*col){
+  
+    for(int r=0;r<SIZE;r++){
+	  for (int c=0;c<SIZE;c++){
+		  if(checkForValidMove(r,c)){
+			  if(tempMoveCheck(r,c,'X')){
+				  *row=r;
+				  *col=c;
+				  printf("Computer moved to (%d,%d) to block the user .\n",*row,*col);
+				  return;
+			  }
+		  
+		  }
+	  
+	  }
+    }
+ 
+ 
+//2.If there is no winning posibility of the user ,computer will get random numbers 
+
+   do{
+         *row=rand()%SIZE; // range will be from 0 to (SIZE-1)
+         *col=rand()%SIZE; 
+   }while(!checkForValidMove(*row,*col)); //run until a valid position is given
+
+   printf("Computer moved to : %d %d \n",*row,*col);
 }
 
 
