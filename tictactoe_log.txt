@@ -1,181 +1,51 @@
 === TIC-TAC-TOE GAME LOG ===
-Date: Sat Sep 20 07:19:50 2025
-Grid Size: 5x5
+Date: Sun Sep 21 17:34:55 2025
+Grid Size: 3x3
 
 Move 1: Player X placed at (0, 0)
-X         
-          
-          
-          
-          
+X     
+      
+      
 
-Move 2: Player O placed at (4, 1)
-X         
-          
-          
-          
-  O       
+Move 2: Player O placed at (0, 2)
+X   O 
+      
+      
 
-Move 3: Player X placed at (1, 1)
-X         
-  X       
-          
-          
-  O       
+Move 3: Player Z placed at (2, 1)
+X   O 
+      
+  Z   
 
-Move 4: Player O placed at (3, 3)
-X         
-  X       
-          
-      O   
-  O       
+Move 4: Player X placed at (2, 2)
+X   O 
+      
+  Z X 
 
-Move 5: Player X placed at (0, 4)
-X       X 
-  X       
-          
-      O   
-  O       
+Move 5: Player O placed at (1, 1)
+X   O 
+  O   
+  Z X 
 
-Move 6: Player O placed at (0, 3)
-X     O X 
-  X       
-          
-      O   
-  O       
+Move 6: Player Z placed at (2, 0)
+X   O 
+  O   
+Z Z X 
 
-Move 7: Player X placed at (1, 4)
-X     O X 
-  X     X 
-          
-      O   
-  O       
+Move 7: Player X placed at (0, 1)
+X X O 
+  O   
+Z Z X 
 
-Move 8: Player O placed at (2, 2)
-X     O X 
-  X     X 
-    O     
-      O   
-  O       
+Move 8: Player O placed at (1, 2)
+X X O 
+  O O 
+Z Z X 
 
-Move 9: Player X placed at (3, 4)
-X     O X 
-  X     X 
-    O     
-      O X 
-  O       
-
-Move 10: Player O placed at (3, 1)
-X     O X 
-  X     X 
-    O     
-  O   O X 
-  O       
-
-Move 11: Player X placed at (2, 4)
-X     O X 
-  X     X 
-    O   X 
-  O   O X 
-  O       
-
-Move 12: Player O placed at (4, 4)
-X     O X 
-  X     X 
-    O   X 
-  O   O X 
-  O     O 
-
-Move 13: Player X placed at (4, 0)
-X     O X 
-  X     X 
-    O   X 
-  O   O X 
-X O     O 
-
-Move 14: Player O placed at (0, 1)
-X O   O X 
-  X     X 
-    O   X 
-  O   O X 
-X O     O 
-
-Move 15: Player X placed at (3, 0)
-X O   O X 
-  X     X 
-    O   X 
-X O   O X 
-X O     O 
-
-Move 16: Player O placed at (1, 2)
-X O   O X 
-  X O   X 
-    O   X 
-X O   O X 
-X O     O 
-
-Move 17: Player X placed at (1, 0)
-X O   O X 
-X X O   X 
-    O   X 
-X O   O X 
-X O     O 
-
-Move 18: Player O placed at (2, 0)
-X O   O X 
-X X O   X 
-O   O   X 
-X O   O X 
-X O     O 
-
-Move 19: Player X placed at (0, 2)
-X O X O X 
-X X O   X 
-O   O   X 
-X O   O X 
-X O     O 
-
-Move 20: Player O placed at (2, 1)
-X O X O X 
-X X O   X 
-O O O   X 
-X O   O X 
-X O     O 
-
-Move 21: Player X placed at (4, 2)
-X O X O X 
-X X O   X 
-O O O   X 
-X O   O X 
-X O X   O 
-
-Move 22: Player O placed at (1, 3)
-X O X O X 
-X X O O X 
-O O O   X 
-X O   O X 
-X O X   O 
-
-Move 23: Player X placed at (2, 3)
-X O X O X 
-X X O O X 
-O O O X X 
-X O   O X 
-X O X   O 
-
-Move 24: Player O placed at (3, 2)
-X O X O X 
-X X O O X 
-O O O X X 
-X O O O X 
-X O X   O 
-
-Move 25: Player X placed at (4, 3)
-X O X O X 
-X X O O X 
-O O O X X 
-X O O O X 
-X O X X O 
+Move 9: Player Z placed at (1, 0)
+X X O 
+Z O O 
+Z Z X 
 
 GAME OVER: It's a draw!
 

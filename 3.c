@@ -17,9 +17,11 @@ int checkWin();
 int checkDraw();
 void acceptInput(int *row ,int *col);
 void getPlayerMove(char mark, int *row, int *col);
-char switchPlayer(char current);
+char switchPlayer(char current,int num);
 int tempMoveCheck(int row,int col,char mark);
-void computerMoves(int *row,int *col);// computer
+int smartWinMove(int *row,int*col,char mark,int num);
+int blockMove(int *row,int*col,char mark,int num);
+void computerMoves(int *row,int *col,char mark,int num);
 void gameState(int moveNumber, char player, int row, int col);
 void gameResult(int result, char winner) ;
 void initializeLogFile();
@@ -81,7 +83,7 @@ int main() {
                       break;
                 }
 
-                currentPlayer = switchPlayer(currentPlayer);  //switch the player 
+                currentPlayer = switchPlayer(currentPlayer,num);  //switch the player 
             }
  
             break;
@@ -100,14 +102,14 @@ int main() {
 	       if (currentPlayer=='X'){
 		     getPlayerMove('X',&row,&col); //since the user is x
 	       }else{
-		      computerMoves(&row,&col);  //get the input from computer
+		      computerMoves(&row,&col,currentPlayer,num);  //get the input from computer
 	       }
 
                markBoard(row, col, currentPlayer);  //mark movements on the beard
                gameState(moveNumber++, currentPlayer, row, col); //add game status to the file
                showGrid(); //after each move show tj=he game status
                
-	      if (checkWin()) {   //after each move check the winning condition
+	       if (checkWin()) {   //after each move check the winning condition
                       showGrid();
                       printf("Player %c wins!\n", currentPlayer);
                       gameResult(1, currentPlayer);
@@ -117,16 +119,50 @@ int main() {
                       printf("It's a draw!\n");
                       gameResult(0, ' ');
                       break;
-                }
-	        currentPlayer=switchPlayer(currentPlayer);
+                 }
+	         currentPlayer=switchPlayer(currentPlayer,num);
            }
       
 
            break; 
 
     case 3:
-           //run the multiplayer game 
-           break;
+           //run the three player game 
+	    printf("You are the player 'X' and 'O' and 'Z' are two computer players\n");
+            printf("\n=== TIC TAC TOE %dx%d ===\n", SIZE, SIZE);
+            printf("Player X starts.\n");
+            showGrid();
+            srand(time(NULL)); //gave a seeding value as a starting value for the random nuber generator 
+            
+	    while(1){
+                   if (currentPlayer=='X'){ 
+			    getPlayerMove('X',&row,&col); //since the user is x
+							  
+	           }else if(currentPlayer=='O'){
+                             computerMoves(&row,&col,currentPlayer,num);  //get the input from computer o
+
+                   }else{
+			   computerMoves(&row,&col,currentPlayer,num);  //get the input from computer z
+                   }
+
+		   markBoard(row, col, currentPlayer);  //mark movements on the beard
+                   gameState(moveNumber++, currentPlayer, row, col); //add game status to the file
+                   showGrid(); //after each move show tj=he game status
+
+                   if (checkWin()) {   //after each move check the winning condition
+                        showGrid();
+                        printf("Player %c wins!\n", currentPlayer);
+                        gameResult(1, currentPlayer);
+                        break;
+                   } else if (checkDraw()) {  //after each move check the winning condition
+                         showGrid();
+                         printf("It's a draw!\n");
+                         gameResult(0, ' ');
+                         break;
+                   }
+                   currentPlayer=switchPlayer(currentPlayer,num);
+            }
+	    break;
     default:
            printf("The number is not a valid mode\n");
   }
@@ -304,47 +340,152 @@ int tempMoveCheck(int row,int col,char mark){
 	return victory;             // if victory is 1 it has a chance to win if it is 0 the move doesn't lead to win 
 }
 
-//this contain two behaviors of the computer 
 
-// 1.Try to block if the user has a  chance to win 
-void computerMoves(int*row,int*col){
+
+//try to win by the computers
+
+int smartWinMove(int *row,int*col,char mark,int num){
+
+  if(num ==2){
+    if(mark!='O'){   // in the 2 player game it remove other computer Z 
+	    return 0;
+    }
+  }else if (num ==3){
+	  if(mark!='O' && mark!='Z'){   //in the 3 player game accept both o and z
+		  return 0;
+	  }
+  }
   
-    for(int r=0;r<SIZE;r++){
-	  for (int c=0;c<SIZE;c++){
-		  if(checkForValidMove(r,c)){
-			  if(tempMoveCheck(r,c,'X')){
+   for(int r=0; r<SIZE; r++){
+        for (int c=0 ;c<SIZE;c++){
+              if(checkForValidMove(r,c) && (tempMoveCheck(r,c,mark))){
+                          
+                                  *row=r;
+                                  *col=c;
+                                  printf("Computer %c moved to (%d,%d) to win  .\n",mark,*row,*col);
+                                  return 1;
+                          }
+
+                  }
+
+      } 
+  
+  return 0;  // no winning move 
+}
+    
+
+// Try to block if the human  has a  chance to win 
+int blockMove(int *row,int*col,char mark,int num){
+ char opponents[3];
+ int numOfOpponents;
+ if(mark=='O' || mark =='Z'){
+    if (num == 2){  // two player game mode there are only x or o
+      opponents[0]='X';
+      opponents[1]='O';
+      numOfOpponents=2;
+      
+    }else if(num == 3){
+	     opponents[0]='X';
+             opponents[1]='O';
+             opponents[2]='Z';
+             numOfOpponents=3;
+   }
+
+    for(int p=0;p<numOfOpponents;p++){
+       if(opponents[p] !=mark){     //skip the current player
+             for(int r=0;r<SIZE;r++){
+	          for (int c=0;c<SIZE;c++){
+		        if(checkForValidMove(r,c)){
+			       if(tempMoveCheck(r,c,opponents[p])){   //
 				  *row=r;
 				  *col=c;
-				  printf("Computer moved to (%d,%d) to block the user .\n",*row,*col);
-				  return;
-			  }
+				  printf("Computer %c moved to (%d,%d) to block the player 'X' .\n",mark,*row,*col);
+				  return 1;
+			       }
 		  
-		  }
+		      }
 	  
-	  }
+	        }
+            }
+ 
+       }
+
     }
- 
- 
-//2.If there is no winning posibility of the user ,computer will get random numbers 
-
-   do{
-         *row=rand()%SIZE; // range will be from 0 to (SIZE-1)
-         *col=rand()%SIZE; 
-   }while(!checkForValidMove(*row,*col)); //run until a valid position is given
-
-   printf("Computer moved to : %d %d \n",*row,*col);
+ }
+ return 0;   
 }
 
+void computerMoves(int*row,int*col,char mark,int num){
+
+  if (num==2){
+     if(mark=='O'){
+        if (!smartWinMove(row,col,mark,num)){
+             if(!blockMove(row,col,mark,num)){
+                 //If there is no winning posibility of the user ,computer will get random numbers 
+
+                 do{
+                       *row=rand()%SIZE; // range will be from 0 to (SIZE-1)
+                       *col=rand()%SIZE;
+                 }while(!checkForValidMove(*row,*col)); //run until a valid position is given
+
+                 printf("Computer %c moved to : %d %d \n",mark,*row,*col);
+             }
+       }
+    }
+  }else if(num ==3){
+      if(mark=='O'){
+        if (!smartWinMove(row,col,mark,num)){
+             if(!blockMove(row,col,mark,num)){
+                 //If there is no winning posibility of the user ,computer will get random numbers
+
+                 do{
+                       *row=rand()%SIZE; // range will be from 0 to (SIZE-1)
+                       *col=rand()%SIZE;
+                 }while(!checkForValidMove(*row,*col)); //run until a valid position is given
+
+                 printf("Computer %c moved to : %d %d \n",mark,*row,*col);
+             }
+       }
+    }
+    if(mark=='Z'){
+        if (!smartWinMove(row,col,mark,num)){
+             if(!blockMove(row,col,mark,num)){
+                 //If there is no winning posibility of the user ,computer will get random numbers
+
+                 do{
+                       *row=rand()%SIZE; // range will be from 0 to (SIZE-1)
+                       *col=rand()%SIZE;
+                 }while(!checkForValidMove(*row,*col)); //run until a valid position is given
+
+                 printf("Computer %c moved to : %d %d \n",mark,*row,*col);
+             }
+       }
+    }
+
+ }
+
+}
 
 // Switch player
-char switchPlayer(char current) {
-    if (current == 'X') {
-	   return 'O' ;
-    }else{
-	  return  'X';
+char switchPlayer(char current,int num) {
+    if (num==2){
+        if (current == 'X') {
+                   return 'O' ;
+        }else{
+                  return 'X';
+	}
+     } else if (num==3){
+	
+           if (current == 'X') {
+	           return 'O' ;
+           }else if(current =='O') {
+	          return  'Z';
+           }else{
+	          return 'X';  //loop back to user
+
+           }    
     }
 }
-
 // log the current state of the board 
 void gameState(int moveNumber, char player, int row, int col) { //mover number ,current player ,row and column
     fprintf(logFile, "Move %d: Player %c placed at (%d, %d)\n", moveNumber, player, row, col);
