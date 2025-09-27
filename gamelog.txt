@@ -1,0 +1,51 @@
+    TIC-TAC-TOE GAME LOG    
+Date: Sat Sep 27 11:02:36 2025
+Grid Size: 3x3
+
+Move 1: Player X placed at (0, 0)
+X     
+      
+      
+
+Move 2: Player O placed at (0, 1)
+X O   
+      
+      
+
+Move 3: Player Z placed at (1, 2)
+X O   
+    Z 
+      
+
+Move 4: Player X placed at (0, 2)
+X O X 
+    Z 
+      
+
+Move 5: Player O placed at (2, 1)
+X O X 
+    Z 
+  O   
+
+Move 6: Player Z placed at (1, 1)
+X O X 
+  Z Z 
+  O   
+
+Move 7: Player X placed at (2, 2)
+X O X 
+  Z Z 
+  O X 
+
+Move 8: Player O placed at (1, 0)
+X O X 
+O Z Z 
+  O X 
+
+Move 9: Player Z placed at (2, 0)
+X O X 
+O Z Z 
+Z O X 
+
+GAME OVER: It's a draw!
+
