@@ -5,9 +5,10 @@
 // Global variables
 char **grid;  //double pointer is used to let the compiler know the memory size before running the program  
 int SIZE;     // use this variable because the user choose the board size
-FILE *LogFile;  
+FILE *fptr;  // write all movemets of all players and this is accessible by other functions 
 
 //function prototypes
+
 void createTheGrid();
 void freeCellsAfterGame();
 void displayTheGrid();
@@ -44,14 +45,17 @@ int main() {
 
     createTheGrid();  // create the board to user requirments
 			
-    LogFile = fopen("gamelog.txt", "w");  //open the text file in write mode
-    if (!LogFile) {     //file didin't create
-	    printf("Error creating log file!\n");
-	    freeCellsAfterGame();  //free the allocated memory 
-	    return 1;
+    fptr = fopen("gamelog.txt", "w");  //open the text file in write mode
+    //if we use the write mode and if the file is not created yet it will create and write the text we want to create 
+
+    if (!fptr) {   
+	    printf("Error creating  file!\n");
+	    freeCellsAfterGame();  //free the allocated memory for rows 
+	    return 1; 
     }
 
     createTheFile();  //write the changes to the text file 
+
     printf("Select the Game mode:\n");
     printf("     1. Two Players (User to user)\n");
     printf("     2. User vs Computer\n");
@@ -61,42 +65,44 @@ int main() {
     scanf("%d",&num);
 
     switch(num){   //used a switch function to organize codde for  each mode 
-    case 1:
-           //run the two player game 
-	   printf("\n    TIC TAC TOE %dx%d    \n", SIZE, SIZE);
-           printf("Player X starts.\n");
+    
+	  case 1:
+                  //run the two player game 
+	          printf("\n    TIC TAC TOE %dx%d    \n", SIZE, SIZE);
+                  printf("Player X starts.\n");
 
-           //game started 
-             while (1) {
-                 displayTheGrid();
-                 getPlayerMove(currentPlayer, &row, &col);
-                 markOnTheGrid(row, col, currentPlayer);
-                 gameState(moveNumber++, currentPlayer, row, col);
+                  //game started 
+                   while (1) {  
+                          displayTheGrid();
+                          getPlayerMove(currentPlayer, &row, &col);
+                          markOnTheGrid(row, col, currentPlayer);
+                          gameState(moveNumber++, currentPlayer, row, col);
 
-                 if (checkForTheWinner()) {   //after each move check the winning condition
-                      displayTheGrid();
-                      printf("Player %c wins!\n", currentPlayer);
-                      gameResult(1, currentPlayer);
-                      break;
-                 } else if (checkForDraw()) {  //after each move check the winning condition
-                      displayTheGrid();
-                      printf("It's a draw!\n");
-                      gameResult(0, ' ');
-                      break;
-                }
+                         if (checkForTheWinner()) {   //after each move check the winning condition
+                                displayTheGrid();
+                                printf("Player %c wins!\n", currentPlayer);
+                                gameResult(1, currentPlayer);
+                                break;
+                         } else if (checkForDraw()) {  //after each move check the winning condition
+                                displayTheGrid();
+                                printf("It's a draw!\n");
+                                gameResult(0, ' ');
+                                break;
+                        }
 
-                currentPlayer = swapPlayersAfterEachMove(currentPlayer,num);  //switch the player 
-            }
+                        currentPlayer = swapPlayersAfterEachMove(currentPlayer,num);  //switch the player 
+                   }
  
-            break;
+                    break;
         
-    case 2:
+        case 2:
             //run the user vs computer game
 	
           printf("You are the player X and computer is the player O\n");
           printf("\n=== TIC TAC TOE %dx%d ===\n", SIZE, SIZE);
           printf("Player X starts.\n");
 	  displayTheGrid();
+
           srand(time(NULL)); //gave a seeding value as a starting value for the random nuber generator 
           while(1){
 
@@ -116,7 +122,7 @@ int main() {
                       printf("Player %c wins!\n", currentPlayer);
                       gameResult(1, currentPlayer);
                       break;
-                 } else if (checkForDraw()) {  //after each move check the winning condition
+                 } else if (checkForDraw()) {  //if there is no winning situation check for the  draw condition
                       displayTheGrid();
                       printf("It's a draw!\n");
                       gameResult(0, ' ');
@@ -131,9 +137,10 @@ int main() {
     case 3:
            //run the three player game 
 	    printf("You are the player 'X' and 'O' and 'Z' are two computer players\n");
-            printf("\n=== TIC TAC TOE %dx%d ===\n", SIZE, SIZE);
+            printf("\n    TIC TAC TOE  %dx%d grid   \n", SIZE, SIZE);
             printf("Player X starts.\n");
             displayTheGrid();
+
             srand(time(NULL)); //gave a seeding value as a starting value for the random nuber generator 
             
 	    while(1){
@@ -154,12 +161,12 @@ int main() {
                    if (checkForTheWinner()) {   //after each move check the winning condition
                         displayTheGrid();
                         printf("Player %c wins!\n", currentPlayer);
-                        gameResult(1, currentPlayer);
+                        gameResult(1, currentPlayer);  
                         break;
-                   } else if (checkForDraw()) {  //after each move check the winning condition
+                   } else if (checkForDraw()) {  //if there is no winning situation check for the draw 
                          displayTheGrid();
                          printf("It's a draw!\n");
-                         gameResult(0, ' ');
+                         gameResult(0, ' ');    //output the game result
                          break;
                    }
                    currentPlayer=swapPlayersAfterEachMove(currentPlayer,num);
@@ -169,7 +176,7 @@ int main() {
            printf("The number is not a valid mode\n");
   }
      printf("Game log saved to 'gamelog.txt'\n");  //after switching before the next player start the game wirte the previous moves to thetxt file 
-     fclose(LogFile); //file is closed 
+     fclose(fptr); //file is closed 
      freeCellsAfterGame(); //memory allocated  to the board is freed 
 
  
@@ -184,7 +191,7 @@ void createTheGrid() {
     for (int i = 0; i < SIZE; i++) {
         grid[i] = (char*)malloc(SIZE * sizeof(char)); //create each row by allocating memory 
         for (int j = 0; j < SIZE; j++) { //name each meory block with a index 
-            grid[i][j] = ' ';
+            grid[i][j] = ' '; // the space indicat an empty cell 
         }
     }
 }
@@ -200,8 +207,7 @@ void freeCellsAfterGame() {
 // Function to display the board
 void displayTheGrid() {
 
-    //new code
-    printf("\n    ");   //keep proper spacing before priting column numbers
+    printf("\n    ");   //keep proper spacing before printing column numbers
         for(int i=0; i<SIZE;i++){
            printf(" %2d ",i); //used to align the column number to a proper space
         }
@@ -217,7 +223,7 @@ void displayTheGrid() {
 
        //print row by row  with all the structure
       for(int i=0;i<SIZE;i++){
-            printf("  %2d|",i); //total size 3 .This will print the row number with |
+            printf("  %2d|",i); //This will print the row number with |
             for(int j=0;j<SIZE;j++){
                 printf(" %c |",grid[i][j]); //print player  input
             }
@@ -244,7 +250,7 @@ int checkForValidMove(int row, int col) {
 
 // Mark the board
 void markOnTheGrid(int row, int col, char value) {
-    grid[row][col] = value;  //access the cell chosssen by the player and write the value( 'x'/ 'o')
+    grid[row][col] = value;  //access the cell chossen by the player and write the value( 'x'/ 'o'/'Z')
 }
 
 // Check for win condition
@@ -278,32 +284,32 @@ int checkForTheWinner() {
                 }
             }
             if (win)
-                    return 1; //if matches  winner is found
+                    return 1;     //if matches  winner is found
         }
     }
 
     // Check main diagonal
     char firstDiag = grid[0][0];
-    if (firstDiag != ' ') { //the first cel is not empty 
-        int win = 1; //have a chance to win 
+    if (firstDiag != ' ') {   //the first cel is not empty 
+        int win = 1;         //have a chance to win 
         for (int i = 1; i < SIZE; i++) { 
-            if (grid[i][i] != firstDiag) { //check the next mainn diagonal value is identical 
-		    win = 0; //not identical
-		    break; //stop cheking the main diagonal
+            if (grid[i][i] != firstDiag) {    //check the next mainn diagonal value is identical 
+		    win = 0;    //not identical
+		    break;     //stop cheking the main diagonal
 	    }
         }
         if (win) 
-		return 1; //matching values so win
+		return 1;        //matching values so win
     }
 
     // Check anti-diagonal
     char firstAnti = grid[0][SIZE-1]; //get the first  anti-diagonal cell 
-    if (firstAnti != ' ') {//check whether it is not empty 
-        int win = 1; //have a chance to win
+    if (firstAnti != ' ') {           //check whether it is not empty 
+        int win = 1;           //have a chance to win
         for (int i = 1; i < SIZE; i++) {
-            if (grid[i][SIZE-1-i] != firstAnti) { //check for identical values 
-		    win = 0;  //no identical values 
-		    break; //stop checking the anti-diagonal
+            if (grid[i][SIZE-1-i] != firstAnti) {     //check for identical values 
+		    win = 0;           //no identical values 
+		    break;      //stop checking the anti-diagonal
 	    }
         }
         if (win) 
@@ -348,12 +354,12 @@ int tempMoveCheck(int row,int col,char value){
 	grid[row][col]=value;     //Temperarily place the mark
 	int victory=checkForTheWinner();     //check all the winning posibilities of the user 
 	grid[row][col]=' '; 	//remove the predicted move  
-	return victory;             // if victory is 1 it has a chance to win if it is 0 the move doesn't lead to win 
+	return victory;             // if victory is 1 user has a chance to win if it is 0 the move doesn't lead to win 
 }
 
 
 
-//try to win by the computers
+//try to win by  the computers
 
 int smartWinMove(int *row,int*col,char value,int num){
 
@@ -367,7 +373,7 @@ int smartWinMove(int *row,int*col,char value,int num){
 	  }
   }
   
-   for(int r=0; r<SIZE; r++){
+  for(int r=0; r<SIZE; r++){
         for (int c=0 ;c<SIZE;c++){
               if(checkForValidMove(r,c) && (tempMoveCheck(r,c,value))){
                           
@@ -375,9 +381,9 @@ int smartWinMove(int *row,int*col,char value,int num){
                                   *col=c;
                                   printf("Computer %c moved to (%d,%d) to win  .\n",value,*row,*col);
                                   return 1;
-                          }
+               }
 
-                  }
+	}
 
       } 
   
@@ -386,9 +392,12 @@ int smartWinMove(int *row,int*col,char value,int num){
     
 
 // Try to block if the human  has a  chance to win 
+//if there are multiple opportunities for the user to win the computer can only block one winnig choice at a time so the game will notbe draw every time
+
 int blockOpponentsMoves(int *row,int*col,char value,int num){
  char opponents[3];
  int numOfOpponents;
+ 
  if(value=='O' || value =='Z'){
     if (num == 2){  // two player game mode there are only x or o
       opponents[0]='X';
@@ -432,7 +441,7 @@ void getComputerMoves(int*row,int*col,char value,int num){
      if(value=='O'){
         if (!smartWinMove(row,col,value,num)){
              if(!blockOpponentsMoves(row,col,value,num)){
-                 //If there is no winning posibility of the user ,computer will get random numbers 
+                 
 
                  do{
                        *row=rand()%SIZE; // range will be from 0 to (SIZE-1)
@@ -453,7 +462,7 @@ void getComputerMoves(int*row,int*col,char value,int num){
                        *row=rand()%SIZE; // range will be from 0 to (SIZE-1)
                        *col=rand()%SIZE;
                  }while(!checkForValidMove(*row,*col)); //run until a valid position is given
-
+                                                                                                                
                  printf("Computer %c moved to : %d %d \n",value,*row,*col);
              }
        }
@@ -479,7 +488,8 @@ void getComputerMoves(int*row,int*col,char value,int num){
 
 // function creatded to switch players
 char swapPlayersAfterEachMove(char current,int num) {
-    if (num==2){
+
+    if (num==1 || num==2){
         if (current == 'X') {     //if the current player is x the swap to next player o  or vice versa
                    return 'O' ;
         }else{
@@ -497,39 +507,72 @@ char swapPlayersAfterEachMove(char current,int num) {
            }    
     }
 }
-// log the current state of the board 
+
+// log the current state of the board
+// This will not print the whole board as we see in the gae instead of that print the positions
+  
 void gameState(int moveNumber, char player, int row, int col) {       
     
-    fprintf(LogFile, "Move %d: Player %c placed at (%d, %d)\n", moveNumber, player, row, col);
-    for (int i = 0; i < SIZE; i++) {        //loop through each row 
+    fprintf(fptr, "Move %d: Player %c placed at (%d, %d)\n", moveNumber, player, row, col);
+    /*for (int i = 0; i < SIZE; i++) {        //loop through each row 
         for (int j = 0; j < SIZE; j++) {   //loop through each cell in that row
-            fprintf(LogFile, "%c ", grid[i][j]);  //print each cell to the text file seperated by  space
+            fprintf(fptr, "%c ", grid[i][j]);  //print each cell to the text file seperated by  space
         }
-        fprintf(LogFile, "\n"); //move to the next line after finishing one row
-    }
-    fprintf(LogFile, "\n"); 
-    fflush(LogFile);  //ensure all data to be written to the file immediately  otherwise if the program crashes all data will be lost 
+        fprintf(fptr, "\n"); //move to the next line after finishing one row
+    }*/
+    
+    fprintf(fptr,"\n    ");   //keep proper spacing before printing column numbers
+        for(int i=0; i<SIZE;i++){
+          fprintf(fptr," %2d ",i); //used to align the column number to a proper space
+        }
+
+
+        fprintf(fptr,"\n    ");// keep space before the row start
+        for(int i=0;i<((SIZE*5)-SIZE+1);i++){  // this is the mechanism I used to create the proper
+               fprintf(fptr,"-");
+       }
+
+
+       fprintf(fptr,"\n");
+
+       //print row by row  with all the structure
+      for(int i=0;i<SIZE;i++){
+            fprintf(fptr,"  %2d|",i); //This will print the row number with |
+            for(int j=0;j<SIZE;j++){
+                fprintf(fptr," %c |",grid[i][j]); //print player  input
+            }
+            fprintf(fptr,"\n    ");
+
+            for(int i=0;i<((SIZE*5)-SIZE+1);i++){  // this is the mechanism I used to create the proper
+               fprintf(fptr,"-");
+            }
+            fprintf(fptr,"\n");
+      }
+
+    fprintf(fptr, "\n"); 
+    fflush(fptr);  //ensure all data to be written to the file immediately  otherwise if the program crashes all data will be lost 
 }
 
 
 //log the final result of the game 
+
 void gameResult(int result, char winner) {
-    if (result == 1) {  //checkWin() return 1
-	    fprintf(LogFile, "GAME OVER: Player %c wins!\n\n", winner);
+    if (result == 1) {                  //checkForTheWinner() return 1
+	    fprintf(fptr, "GAME OVER: Player %c wins!\n\n", winner);
     } else{  
-	    fprintf(LogFile, "GAME OVER: It's a draw!\n\n");
+	    fprintf(fptr, "GAME OVER: It's a draw!\n\n");
     }
-    fflush(LogFile);  //immediately write the result
+    fflush(fptr);                     //immediately write the result
 }
 
-// the log file has time player moves
+// the log file has details of each move 
 
 void createTheFile() {
     time_t now = time(NULL);              //get the current system time 
-    fprintf(LogFile, "    TIC-TAC-TOE GAME LOG    \n");  //title
-    fprintf(LogFile, "Date: %s", ctime(&now));             //convert the current time to readable format 
-    fprintf(LogFile, "Grid Size: %dx%d\n\n", SIZE, SIZE);   //board size user chose 
-    fflush(LogFile); 
+    fprintf(fptr, "    TIC-TAC-TOE GAME LOG    \n");  
+    fprintf(fptr, "Date: %s", ctime(&now));             //convert the current time to readable format 
+    fprintf(fptr, "Grid Size: %dx%d\n\n", SIZE, SIZE);    
+    fflush(fptr); // this will write the data from buffer to disk immediately .And also if the the program crash we can prevent data loss
 }
 
 

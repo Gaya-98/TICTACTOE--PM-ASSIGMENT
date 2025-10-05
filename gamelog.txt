@@ -1,51 +1,83 @@
     TIC-TAC-TOE GAME LOG    
-Date: Sat Sep 27 11:02:36 2025
+Date: Sun Oct  5 08:12:18 2025
 Grid Size: 3x3
 
-Move 1: Player X placed at (0, 0)
-X     
-      
-      
+Move 1: Player X placed at (1, 1)
 
-Move 2: Player O placed at (0, 1)
-X O   
-      
-      
+      0   1   2 
+    -------------
+   0|   |   |   |
+    -------------
+   1|   | X |   |
+    -------------
+   2|   |   |   |
+    -------------
 
-Move 3: Player Z placed at (1, 2)
-X O   
-    Z 
-      
+Move 2: Player O placed at (2, 1)
 
-Move 4: Player X placed at (0, 2)
-X O X 
-    Z 
-      
+      0   1   2 
+    -------------
+   0|   |   |   |
+    -------------
+   1|   | X |   |
+    -------------
+   2|   | O |   |
+    -------------
 
-Move 5: Player O placed at (2, 1)
-X O X 
-    Z 
-  O   
+Move 3: Player X placed at (2, 0)
 
-Move 6: Player Z placed at (1, 1)
-X O X 
-  Z Z 
-  O   
+      0   1   2 
+    -------------
+   0|   |   |   |
+    -------------
+   1|   | X |   |
+    -------------
+   2| X | O |   |
+    -------------
+
+Move 4: Player O placed at (0, 2)
+
+      0   1   2 
+    -------------
+   0|   |   | O |
+    -------------
+   1|   | X |   |
+    -------------
+   2| X | O |   |
+    -------------
+
+Move 5: Player X placed at (0, 0)
+
+      0   1   2 
+    -------------
+   0| X |   | O |
+    -------------
+   1|   | X |   |
+    -------------
+   2| X | O |   |
+    -------------
+
+Move 6: Player O placed at (1, 0)
+
+      0   1   2 
+    -------------
+   0| X |   | O |
+    -------------
+   1| O | X |   |
+    -------------
+   2| X | O |   |
+    -------------
 
 Move 7: Player X placed at (2, 2)
-X O X 
-  Z Z 
-  O X 
 
-Move 8: Player O placed at (1, 0)
-X O X 
-O Z Z 
-  O X 
+      0   1   2 
+    -------------
+   0| X |   | O |
+    -------------
+   1| O | X |   |
+    -------------
+   2| X | O | X |
+    -------------
 
-Move 9: Player Z placed at (2, 0)
-X O X 
-O Z Z 
-Z O X 
-
-GAME OVER: It's a draw!
+GAME OVER: Player X wins!
 
